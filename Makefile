@@ -85,3 +85,7 @@ help:
 	@echo "  docker-build  - Build Docker image"
 	@echo "  docker-run    - Run Docker container"
 	@echo "  help          - Show this help" 
+
+.PHONY: swag
+swag:
+	swag init -g cmd/server/main.go 

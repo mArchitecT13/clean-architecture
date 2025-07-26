@@ -10,6 +10,8 @@ import (
 	"clean-architecture/internal/interfaces/http/handlers"
 	"clean-architecture/internal/interfaces/http/middleware/logging"
 	"clean-architecture/pkg/logger"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 // NewRouter creates a new Chi router with middleware
@@ -33,6 +35,9 @@ func NewRouter(logger logger.Logger, userHandler *handlers.UserHandler) http.Han
 
 	// Health check endpoint
 	r.Get("/health", handlers.HealthCheck)
+
+	// Serve Swagger UI
+	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
 	// API routes
 	r.Route("/api/v1", func(r chi.Router) {

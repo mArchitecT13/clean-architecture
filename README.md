@@ -158,6 +158,18 @@ go test ./...
 go test -cover ./...
 ```
 
+## API Documentation
+
+After running the server, visit [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html) for interactive API docs.
+
+To regenerate the docs after changing handler annotations, run:
+
+```bash
+make swag
+```
+
+This will update the `docs/` directory with the latest Swagger documentation.
+
 ## Project Dependencies
 
 - **Chi**: HTTP router and middleware

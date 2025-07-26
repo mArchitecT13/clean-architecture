@@ -36,7 +36,16 @@ type UpdateUserRequest struct {
 	Email string `json:"email,omitempty"`
 }
 
-// CreateUser handles user creation
+// CreateUser godoc
+// @Summary      Create a new user
+// @Description  Create a new user with email and name
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        user  body      CreateUserRequest  true  "User info"
+// @Success      200   {object}  UserResponse
+// @Failure      400   {object}  ErrorResponse
+// @Router       /api/v1/users [post]
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var req CreateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -66,7 +75,15 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetUser handles user retrieval by ID
+// GetUser godoc
+// @Summary      Get user by ID
+// @Description  Get a user by their ID
+// @Tags         users
+// @Produce      json
+// @Param        id   path      string  true  "User ID"
+// @Success      200  {object}  UserResponse
+// @Failure      404  {object}  ErrorResponse
+// @Router       /api/v1/users/{id} [get]
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
 	if userID == "" {
@@ -95,7 +112,17 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// UpdateUser handles user updates
+// UpdateUser godoc
+// @Summary      Update a user
+// @Description  Update a user's information
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id    path      string             true  "User ID"
+// @Param        user  body      UpdateUserRequest  true  "User info"
+// @Success      200   {object}  UserResponse
+// @Failure      400   {object}  ErrorResponse
+// @Router       /api/v1/users/{id} [put]
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
 	if userID == "" {
@@ -135,7 +162,15 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// DeleteUser handles user deletion
+// DeleteUser godoc
+// @Summary      Delete a user
+// @Description  Delete a user by their ID
+// @Tags         users
+// @Produce      json
+// @Param        id   path      string  true  "User ID"
+// @Success      200  {object}  SuccessResponse
+// @Failure      404  {object}  ErrorResponse
+// @Router       /api/v1/users/{id} [delete]
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
 	if userID == "" {
@@ -164,7 +199,13 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// ListUsers handles user listing
+// ListUsers godoc
+// @Summary      List all users
+// @Description  Get a list of all users
+// @Tags         users
+// @Produce      json
+// @Success      200  {array}   UserResponse
+// @Router       /api/v1/users [get]
 func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	limitStr := r.URL.Query().Get("limit")
 	offsetStr := r.URL.Query().Get("offset")

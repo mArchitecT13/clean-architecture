@@ -64,3 +64,37 @@ func MethodNotAllowedHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusMethodNotAllowed)
 	render.JSON(w, r, response)
 }
+
+// UserResponse represents a user response for Swagger
+// swagger:response UserResponse
+type UserResponse struct {
+	// in: body
+	Body struct {
+		Status    string      `json:"status"`
+		Message   string      `json:"message,omitempty"`
+		Data      interface{} `json:"data,omitempty"`
+		Timestamp string      `json:"timestamp"`
+	}
+}
+
+// ErrorResponse represents an error response for Swagger
+// swagger:response ErrorResponse
+type ErrorResponse struct {
+	// in: body
+	Body struct {
+		Status    string `json:"status"`
+		Message   string `json:"message"`
+		Timestamp string `json:"timestamp"`
+	}
+}
+
+// SuccessResponse represents a success response for Swagger
+// swagger:response SuccessResponse
+type SuccessResponse struct {
+	// in: body
+	Body struct {
+		Status    string `json:"status"`
+		Message   string `json:"message"`
+		Timestamp string `json:"timestamp"`
+	}
+}
