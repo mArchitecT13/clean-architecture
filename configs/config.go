@@ -1,73 +1,48 @@
 package configs
 
 import (
-	"os"
-	"strconv"
+	"time"
+
+	"github.com/kelseyhightower/envconfig"
 )
 
-// Config holds application configuration
+// Config holds all configuration for the application
 type Config struct {
-	Server   ServerConfig
-	Database DatabaseConfig
-	Log      LogConfig
+	Server   ServerConfig   `envconfig:"SERVER"`
+	Database DatabaseConfig `envconfig:"DATABASE"`
+	Log      LogConfig      `envconfig:"LOG"`
 }
 
-// ServerConfig holds server-related configuration
+// ServerConfig holds server configuration
 type ServerConfig struct {
-	Port string
-	Host string
+	Port string `envconfig:"PORT" default:"8080"`
+	Host string `envconfig:"HOST" default:"localhost"`
 }
 
-// DatabaseConfig holds database-related configuration
+// DatabaseConfig holds database configuration
 type DatabaseConfig struct {
-	Host     string
-	Port     string
-	User     string
-	Password string
-	Name     string
-	SSLMode  string
+	Host            string        `envconfig:"HOST" default:"localhost"`
+	Port            int           `envconfig:"PORT" default:"5432"`
+	User            string        `envconfig:"USER" default:"postgres"`
+	Password        string        `envconfig:"PASSWORD" default:"password"`
+	DBName          string        `envconfig:"DBNAME" default:"jackpot"`
+	SSLMode         string        `envconfig:"SSLMODE" default:"disable"`
+	MaxOpenConns    int           `envconfig:"MAX_OPEN_CONNS" default:"20"`
+	MaxIdleConns    int           `envconfig:"MAX_IDLE_CONNS" default:"10"`
+	ConnMaxLifetime time.Duration `envconfig:"CONN_MAX_LIFETIME" default:"30m"`
+	ConnMaxIdleTime time.Duration `envconfig:"CONN_MAX_IDLE_TIME" default:"5m"`
 }
 
-// LogConfig holds logging-related configuration
+// LogConfig holds logging configuration
 type LogConfig struct {
-	Level string
+	Level string `envconfig:"LEVEL" default:"info"`
 }
 
-// LoadConfig loads configuration from environment variables
-func LoadConfig() *Config {
-	return &Config{
-		Server: ServerConfig{
-			Port: getEnv("PORT", "8080"),
-			Host: getEnv("HOST", "localhost"),
-		},
-		Database: DatabaseConfig{
-			Host:     getEnv("DB_HOST", "localhost"),
-			Port:     getEnv("DB_PORT", "5432"),
-			User:     getEnv("DB_USER", "postgres"),
-			Password: getEnv("DB_PASSWORD", ""),
-			Name:     getEnv("DB_NAME", "clean_architecture"),
-			SSLMode:  getEnv("DB_SSLMODE", "disable"),
-		},
-		Log: LogConfig{
-			Level: getEnv("LOG_LEVEL", "info"),
-		},
+// Load loads configuration from environment variables
+func Load() (*Config, error) {
+	var cfg Config
+	if err := envconfig.Process("", &cfg); err != nil {
+		return nil, err
 	}
-}
-
-// getEnv gets an environment variable or returns a default value
-func getEnv(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return defaultValue
-}
-
-// getEnvInt gets an environment variable as integer or returns a default value
-func getEnvInt(key string, defaultValue int) int {
-	if value := os.Getenv(key); value != "" {
-		if intValue, err := strconv.Atoi(value); err == nil {
-			return intValue
-		}
-	}
-	return defaultValue
+	return &cfg, nil
 }

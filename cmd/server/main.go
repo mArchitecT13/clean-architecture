@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -19,21 +20,16 @@ func main() {
 	// Create application context
 	appCtx := app.NewApp(logger)
 
-	// Get port from environment or use default
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
-	// Create HTTP server
+	// Create HTTP server using configuration
+	serverAddr := fmt.Sprintf("%s:%s", appCtx.Config.Server.Host, appCtx.Config.Server.Port)
 	server := &http.Server{
-		Addr:    ":" + port,
+		Addr:    serverAddr,
 		Handler: appCtx.Router,
 	}
 
 	// Start server in a goroutine
 	go func() {
-		logger.Info("Starting server on port " + port)
+		logger.Info("Starting server on " + serverAddr)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.Fatal("Server error: " + err.Error())
 		}
@@ -53,6 +49,11 @@ func main() {
 	// Attempt graceful shutdown
 	if err := server.Shutdown(ctx); err != nil {
 		logger.Error("Server forced to shutdown: " + err.Error())
+	}
+
+	// Shutdown application
+	if err := appCtx.Shutdown(ctx); err != nil {
+		logger.Error("Application shutdown error: " + err.Error())
 	}
 
 	logger.Info("Server exited")

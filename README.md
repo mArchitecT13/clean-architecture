@@ -26,6 +26,7 @@ A Go project implementing Clean Architecture principles using Chi router.
 │       └── external/
 ├── pkg/
 │   ├── logger/
+│   ├── postgres/
 │   └── utils/
 ├── configs/
 ├── docs/
@@ -71,10 +72,41 @@ go run cmd/server/main.go
 ```
 
 ### Environment Variables
-Create a `.env` file in the root directory:
-```env
-PORT=8080
-LOG_LEVEL=info
+The application uses environment variables for configuration. You can set them directly or create a `.env` file.
+
+#### Available Environment Variables:
+
+**Server Configuration:**
+- `SERVER_HOST` - Server host (default: localhost)
+- `SERVER_PORT` - Server port (default: 8080)
+
+**Database Configuration:**
+- `DATABASE_HOST` - Database host (default: localhost)
+- `DATABASE_PORT` - Database port (default: 5432)
+- `DATABASE_USER` - Database user (default: postgres)
+- `DATABASE_PASSWORD` - Database password (default: password)
+- `DATABASE_DBNAME` - Database name (default: jackpot)
+- `DATABASE_SSLMODE` - SSL mode (default: disable)
+- `DATABASE_MAX_OPEN_CONNS` - Max open connections (default: 20)
+- `DATABASE_MAX_IDLE_CONNS` - Max idle connections (default: 10)
+- `DATABASE_CONN_MAX_LIFETIME` - Connection max lifetime (default: 30m)
+- `DATABASE_CONN_MAX_IDLE_TIME` - Connection max idle time (default: 5m)
+
+**Logging Configuration:**
+- `LOG_LEVEL` - Log level (default: info)
+
+#### Example Usage:
+```bash
+# Set environment variables directly
+export DATABASE_USER=postgres
+export DATABASE_PASSWORD=mypassword
+export DATABASE_DBNAME=myapp
+go run cmd/server/main.go
+
+# Or use a .env file (copy env.example to .env and modify)
+cp env.example .env
+# Edit .env with your values
+go run cmd/server/main.go
 ```
 
 ## Key Features
@@ -85,6 +117,7 @@ LOG_LEVEL=info
 - **App Context**: Centralized application state management
 - **Middleware Support**: CORS, logging, authentication ready
 - **Testable**: Easy to unit test with dependency injection
+- **Reusable Packages**: Modular packages in `pkg/` for use in other projects
 
 ## Development
 
@@ -94,6 +127,27 @@ LOG_LEVEL=info
 3. Implement business logic in `internal/usecase/`
 4. Add HTTP handlers in `internal/interfaces/http/handlers/`
 5. Wire everything in `internal/app/app.go`
+
+### Reusable Packages
+
+The project includes several reusable packages in the `pkg/` directory:
+
+#### PostgreSQL Package (`pkg/postgres/`)
+A lightweight, reusable Go package for PostgreSQL database connections using GORM.
+
+```go
+import "your-project/pkg/postgres"
+
+// Create a new database connection
+dsn := "host=localhost user=myuser password=mypassword dbname=mydb port=5432 sslmode=disable"
+db, err := postgres.New(dsn)
+if err != nil {
+    log.Fatal("Failed to connect to database:", err)
+}
+defer postgres.Close(db)
+```
+
+For detailed usage and API reference, see [pkg/postgres/README.md](pkg/postgres/README.md).
 
 ### Testing
 ```bash
@@ -109,6 +163,9 @@ go test -cover ./...
 - **Chi**: HTTP router and middleware
 - **Logrus**: Structured logging
 - **Testify**: Testing utilities
+- **GORM**: ORM for database operations
+- **PostgreSQL Driver**: Database driver for PostgreSQL
+- **Envconfig**: Environment variable configuration
 
 ## License
 
