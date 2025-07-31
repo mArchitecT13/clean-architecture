@@ -21,21 +21,21 @@ graph TD
     K --> L[Wait for Requests]
 
     subgraph "Configuration Layer"
-        C1[configs.Load()] --> C2[envconfig.Process()]
+        C1[configs.Load] --> C2[envconfig.Process]
         C2 --> C3[Load Environment Variables]
         C3 --> C4[Return Config Struct]
     end
 
     subgraph "Database Layer"
-        E1[database.InitDatabase()] --> E2[pkg/postgres.New()]
+        E1[database.InitDatabase] --> E2[pkg/postgres.New]
         E2 --> E3[GORM Connection]
         E3 --> E4[Connection Pooling]
     end
 
     subgraph "Dependency Injection"
-        G1[NewPostgresUserRepository()] --> G2[NewUserUseCase()]
-        G2 --> G3[NewUserHandler()]
-        G3 --> G4[NewRouter()]
+        G1[NewPostgresUserRepository] --> G2[NewUserUseCase]
+        G2 --> G3[NewUserHandler]
+        G3 --> G4[NewRouter]
     end
 ```
 
